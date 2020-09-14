@@ -7,7 +7,7 @@ const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
 const app = express();
-mongoose.connect("mongodb+srv://Anthelme:a1b2c3d4e5@cluster0.lt7xk.gcp.mongodb.net/test?retryWrites=true&w=majority", 
+mongoose.connect("mongodb+srv://so-pekocko:piquante@cluster0.lt7xk.gcp.mongodb.net/test?retryWrites=true&w=majority", 
 {
     useNewUrlParser : true,
     useUnifiedTopology : true
@@ -30,5 +30,3 @@ app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 
 module.exports = app;
-
-// rajouter le système de likes/dislikes
