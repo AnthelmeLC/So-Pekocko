@@ -10,7 +10,7 @@ exports.getAllSauces = (req, res, next) => {
 
 //GET ONE
 exports.getOneSauce = (req, res, next) => {
-    Sauce.findOne({_id : req.params.id})
+    Sauce.findById(req.params.id)
     .then(sauce => res.status(200).json(sauce))
     .catch(error => res.status(400).json({error}));
 };
@@ -38,7 +38,7 @@ exports.createSauce = (req, res, next) => {
 exports.modifySauce = (req, res, next) => {
     //si l'utilisateur modifie l'image de la sauce
     if(req.file){
-        Sauce.findOne({_id : req.params.id})
+        Sauce.findById(req.params.id)
         .then(sauce => {
             //suppression de l'ancienne image
             const filename = sauce.imageUrl.split("/images/")[1];
@@ -79,7 +79,7 @@ exports.modifySauce = (req, res, next) => {
 
 //DELETE ONE
 exports.deleteSauce = (req, res, next) => {
-    Sauce.findOne({_id : req.params.id})
+    Sauce.findById(req.params.id)
     .then(sauce => {
         //suppression de l'image correspondante
         const filename = sauce.imageUrl.split("/images/")[1];
@@ -95,28 +95,40 @@ exports.deleteSauce = (req, res, next) => {
 
 //POST LIKE
 exports.likeSauce = (req, res, next) => {
-    Sauce.findOne({_id : req.params.id})
+    Sauce.findById(req.params.id)
     .then(sauce => {
         const like = req.body.like;
+        const userId = req.body.userId;
         //si l'utilisateur like
         if(like === 1){
-            sauce.likes += 1;
-            sauce.usersLiked.push(req.body.userId);
-            Sauce.updateOne({_id : req.params.id}, sauce)
-            .then(() => res.status(200).json({message : "Sauce aimée!"}))
-            .catch(error => res.status(400).json({error}));
+            if(sauce.usersDisliked.indexOf(userId) >= 0){
+                sauce.likes += 1;
+                sauce.usersLiked.push(userId);
+                Sauce.updateOne({_id : req.params.id}, sauce)
+                .then(() => res.status(200).json({message : "Sauce aimée!"}))
+                .catch(error => res.status(400).json({error}));
+            }
+            //si l'utilisateur n'a pas annulé son dislike avant
+            else{
+                throw new Error({message : "Veuillez annuler votre dislike d'abord."});
+            };
         }
         //si l'utilisateur dislike
         else if(like === -1){
-            sauce.dislikes += 1;
-            sauce.usersDisliked.push(req.body.userId);
-            Sauce.updateOne({_id : req.params.id}, sauce)
-            .then(() => res.status(200).json({message : "Sauce détestée!"}))
-            .catch(error => res.status(400).json({error}));
+            if(sauce.usersLiked.indexOf >= 0){
+                sauce.dislikes += 1;
+                sauce.usersDisliked.push(userId);
+                Sauce.updateOne({_id : req.params.id}, sauce)
+                .then(() => res.status(200).json({message : "Sauce détestée!"}))
+                .catch(error => res.status(400).json({error}));
+            }
+            //si l'utilisateur n'a pas annulé son like avant
+            else{
+                throw new Error({message : "Veuillez annuler votre like d'abord."});
+            };
         }
         //si l'utilisateur annule un like ou dislike
         else if(like === 0){
-            const userId = req.body.userId;
             //si l'utilisateur annule un like
             if(sauce.usersLiked.indexOf(userId) >= 0){
                 sauce.likes -= 1;
