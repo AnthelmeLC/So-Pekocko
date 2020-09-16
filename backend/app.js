@@ -8,7 +8,7 @@ const userRoutes = require("./routes/user");
 
 const app = express();
 mongoose.connect("mongodb+srv://so-pekocko:GVHT8dUTpJ@cluster0.lt7xk.gcp.mongodb.net/test?retryWrites=true&w=majority", //Le mdp est en clair pour un soucis que ça fonctionne pour
-{                                                                                                                       //mon menthor et le jury de OpenClassRooms
+{                                                                                                                       //mon mentor et le jury de OpenClassRooms
     useNewUrlParser : true,
     useUnifiedTopology : true
 })
