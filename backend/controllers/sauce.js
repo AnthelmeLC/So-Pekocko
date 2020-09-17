@@ -102,29 +102,29 @@ exports.likeSauce = (req, res, next) => {
         //si l'utilisateur like
         if(like === 1){
             if(sauce.usersDisliked.indexOf(userId) >= 0){
+                throw new Error({message : "Veuillez annuler votre dislike d'abord."});
+            }
+            //si l'utilisateur n'a pas annulé son dislike avant
+            else{
                 sauce.likes += 1;
                 sauce.usersLiked.push(userId);
                 Sauce.updateOne({_id : req.params.id}, sauce)
                 .then(() => res.status(200).json({message : "Sauce aimée!"}))
                 .catch(error => res.status(400).json({error}));
-            }
-            //si l'utilisateur n'a pas annulé son dislike avant
-            else{
-                throw new Error({message : "Veuillez annuler votre dislike d'abord."});
             };
         }
         //si l'utilisateur dislike
         else if(like === -1){
             if(sauce.usersLiked.indexOf >= 0){
+                throw new Error({message : "Veuillez annuler votre like d'abord."});
+            }
+            //si l'utilisateur n'a pas annulé son like avant
+            else{
                 sauce.dislikes += 1;
                 sauce.usersDisliked.push(userId);
                 Sauce.updateOne({_id : req.params.id}, sauce)
                 .then(() => res.status(200).json({message : "Sauce détestée!"}))
                 .catch(error => res.status(400).json({error}));
-            }
-            //si l'utilisateur n'a pas annulé son like avant
-            else{
-                throw new Error({message : "Veuillez annuler votre like d'abord."});
             };
         }
         //si l'utilisateur annule un like ou dislike
