@@ -1,16 +1,19 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sha512 = require("js-sha512");
 
 const User = require("../models/user");
 
 exports.signup = (req, res, next) => {
-    //cryptage du mot de passe
+    //hashage du mot de passe
     bcrypt.hash(req.body.password, 10)
-    .then(hash => {
+    .then(passwordHashed => {
+        //hashage du mail
+        const emailHashed = sha512(req.body.email);
         //création du nouvel utilisateur
         const user = new User({
-            email : req.body.email,
-            password : hash
+            email : emailHashed,
+            password : passwordHashed
         });
         //ajout du nouvel utilisateur à la base de données
         user.save()
@@ -21,8 +24,10 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
+    //hashage du mail
+    const emailHashed = sha512(req.body.email);
     //recherche de l'utilisateur dans la base donnée
-    User.findOne({email : req.body.email})
+    User.findOne({email : emailHashed})
     .then(user => {
         //si l'utilisateur n'existe pas
         if(!user){
