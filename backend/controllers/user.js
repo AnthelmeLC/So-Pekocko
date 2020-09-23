@@ -31,14 +31,14 @@ exports.login = (req, res, next) => {
     .then(user => {
         //si l'utilisateur n'existe pas
         if(!user){
-            return res.status(401).json({error : "Utilisateur non trouvé."});
+            return res.status(401).json({error : "Identifiants incorrects."});
         }
         //vérification du mot de passe
         bcrypt.compare(req.body.password, user.password)
         .then(valid => {
             //si le mot de passe est incorrect
             if(!valid){
-                return res.status(401).json({error : "Mot de passe incorrect."});
+                return res.status(401).json({error : "Identifiants incorrects."});
             }
             //si le mot de passe est correct, création du token de session
             res.status(200).json({
